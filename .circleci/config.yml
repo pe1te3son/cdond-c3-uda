@@ -11,6 +11,10 @@ jobs:
           command: |
             cd frontend
             npm install
+      - save_cache:
+          key: udapeople-npm-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
       - run:
           name: Build front end code
           command: |
@@ -21,45 +25,19 @@ jobs:
       - image: circleci/node:12
     steps:
       - checkout
-      - run:
-          name: Install front end node modules
-          command: |
-            cd frontend
-            npm install
+      - restore_cache:
+        keys:
+          - udapeople-npm-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          - udapeople-npm-cache-v1
+      # - run:
+      #     name: Install front end node modules
+      #     command: |
+      #       cd frontend
+      #       npm install
       - run:
           name: Run frontend test script
           command: |
             cd frontend
-            npm run test
-  build-backend:
-    docker:
-      - image: circleci/node:12
-    steps:
-      - checkout
-      - run:
-          name: Install back end node modules
-          command: |
-            cd backend
-            npm install
-      - run:
-          name: Build backend code
-          command: |
-            cd backend
-            npm run build
-  test-backend:
-    docker:
-      - image: circleci/node:12
-    steps:
-      - checkout
-      - run:
-          name: Install back end node modules
-          command: |
-            cd backend
-            npm install
-      - run:
-          name: Run backend test script
-          command: |
-            cd backend
             npm run test
   audit-check-frontend:
     docker:
@@ -71,6 +49,46 @@ jobs:
           command: |
             cd frontend
             npm audit fix --audit-level=critical --force
+
+  build-backend:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - checkout
+      # - run:
+      #     name: Install back end node modules
+      #     command: |
+      #       cd backend
+      #       npm install
+      - save_cache:
+          key: udapeople-npm-backend-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+      - run:
+          name: Build backend code
+          command: |
+            cd backend
+            npm run build
+  test-backend:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - checkout
+      # - run:
+      #     name: Install back end node modules
+      #     command: |
+      #       cd backend
+      #       npm install
+      - restore_cache:
+        keys:
+          - udapeople-npm-backend-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          - udapeople-npm-backend-cache-v1
+      - run:
+          name: Run backend test script
+          command: |
+            cd backend
+            npm run test
+  
   audit-check-backend:
     docker:
       - image: circleci/node:12
@@ -82,7 +100,7 @@ jobs:
             cd backend
             npm audit fix --audit-level=critical --force 
  
-  create-cloudfront-infrastructure:
+  deploy:
     docker:
       - image: amazon/aws-cli
     steps:
@@ -92,25 +110,25 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
-              --stack-name cloudfront  
+              --stack-name udapeople-cloudfront-${CIRCLE_WORKFLOW_ID}  
       - run:
           name: Create backend infrastructure
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              --stack-name backend
+              --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID}
       - run:
           name: Create front end on aws
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              --stack-name frontend 
+              --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID} 
       - run:
           name: Setup network on aws
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/network.yml \
-              --stack-name network
+              --stack-name udapeople-network-${CIRCLE_WORKFLOW_ID}
                                  
 workflows:
   default:
@@ -124,7 +142,7 @@ workflows:
             - test-frontend
       - build-backend:
           requires:
-            - test-frontend
+            - audit-check-frontend
       - test-backend:
           requires:
             - build-backend
@@ -132,7 +150,7 @@ workflows:
           requires:
             - test-backend
 
-      - create-cloudfront-infrastructure:
+      - deploy:
           requires:
             - audit-check-backend
             - audit-check-frontend
