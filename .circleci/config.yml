@@ -1,17 +1,151 @@
 version: 2.1
 
 jobs:
-  hello-world:
+  build-frontend:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - checkout
+      - run:
+          name: Install front end node modules
+          command: |
+            cd frontend
+            npm install
+      - run:
+          name: Build front end code
+          command: |
+            cd frontend
+            npm run build
+  test-frontend:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - checkout
+      - run:
+          name: Install front end node modules
+          command: |
+            cd frontend
+            npm install
+      - run:
+          name: Run frontend test script
+          command: |
+            cd frontend
+            npm run test
+  build-backend:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - checkout
+      - run:
+          name: Install back end node modules
+          command: |
+            cd backend
+            npm install
+      - run:
+          name: Build backend code
+          command: |
+            cd backend
+            npm run build
+  test-backend:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - checkout
+      - run:
+          name: Install back end node modules
+          command: |
+            cd backend
+            npm install
+      - run:
+          name: Run backend test script
+          command: |
+            cd backend
+            npm run test
+  audit-check-frontend:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - checkout
+      - run:
+          name: Audit check front end code
+          command: |
+            cd frontend
+            npm audit fix --audit-level=critical --force
+  audit-check-backend:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - checkout
+      - run:
+          name: Audit check back end code
+          command: |
+            cd backend
+            npm audit fix --audit-level=critical --force 
+ 
+  create-cloudfront-infrastructure:
     docker:
       - image: amazon/aws-cli
     steps:
       - checkout
       - run:
-          name: Say Hello
+          name: Create cloud front infrastructure
           command: |
-            echo "Hello World"
-
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --stack-name cloudfront  
+  create-aws-backend:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Create backend infrastructure
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \
+              --stack-name backend
+  create-aws-frontend:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Create front end on aws
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --stack-name frontend 
+  create-aws-network:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Setup network on aws
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/network.yml \
+              --stack-name network                           
 workflows:
   default:
     jobs:
-      - hello-world
+      - build-frontend
+      - test-frontend:
+          requires:
+            - build-frontend
+      - build-backend:
+          requires:
+            - test-frontend
+      - test-backend:
+          requires:
+            - build-backend
+      - audit-check-frontend:
+          requires:
+            - test-backend
+      - audit-check-backend:
+          requires:
+            - audit-check-frontend
+      - create-cloudfront-infrastructure
+      - create-aws-backend
+      - create-aws-frontend
+      - create-aws-network
