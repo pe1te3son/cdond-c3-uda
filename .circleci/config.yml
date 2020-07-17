@@ -146,19 +146,19 @@ workflows:
           requires:
             - test-backend
 
-      - create-cloudfront-infrastructure
+      - create-cloudfront-infrastructure:
           requires:
             - audit-check-backend
             - audit-check-frontend
-      - create-aws-backend
+      - create-aws-backend:
           requires:
             - audit-check-backend
             - audit-check-frontend
-      - create-aws-frontend
+      - create-aws-frontend:
           requires:
             - audit-check-backend
             - audit-check-frontend
-      - create-aws-network
+      - create-aws-network:
           requires:
             - audit-check-backend
             - audit-check-frontend
