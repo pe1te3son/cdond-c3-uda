@@ -26,9 +26,9 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-        keys:
-          - udapeople-npm-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
-          - udapeople-npm-cache-v1
+          keys:
+            - udapeople-npm-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - udapeople-npm-cache-v1
       # - run:
       #     name: Install front end node modules
       #     command: |
@@ -80,9 +80,9 @@ jobs:
       #       cd backend
       #       npm install
       - restore_cache:
-        keys:
-          - udapeople-npm-backend-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
-          - udapeople-npm-backend-cache-v1
+          keys:
+            - udapeople-npm-backend-cache-v1-{{ arch }}-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - udapeople-npm-backend-cache-v1
       - run:
           name: Run backend test script
           command: |
