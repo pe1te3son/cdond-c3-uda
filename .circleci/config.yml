@@ -139,15 +139,16 @@ workflows:
               requires:
                 - test-backend
       - run-backend
-        - build-backend:
-            requires:
-              - test-frontend
-        - test-backend:
-            requires:
-              - build-backend
-        - audit-check-backend:
-            requires:
-              - test-backend
+          steps:
+            - build-backend:
+                requires:
+                  - test-frontend
+            - test-backend:
+                requires:
+                  - build-backend
+            - audit-check-backend:
+                requires:
+                  - test-backend
       - run-aws:
           steps: 
             - create-cloudfront-infrastructure
