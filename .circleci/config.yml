@@ -90,18 +90,17 @@ jobs:
     steps:
       - checkout
       - run:
+        name: Create backend infrastructure
+        command: |
+          aws cloudformation deploy \
+            --template-file .circleci/files/backend.yml \
+            --stack-name "udapeoplebackend"
+      - run:
           name: Create cloud front infrastructure
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name "udapeoplecloudfront"
-      - run:
-          name: Create backend infrastructure
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/backend.yml \
-              --stack-name "udapeoplebackend"
-
       - run:
           name: Create front end on aws
           command: |
