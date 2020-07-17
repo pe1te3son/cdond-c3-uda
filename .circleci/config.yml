@@ -93,39 +93,25 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name cloudfront  
-  create-aws-backend:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
       - run:
           name: Create backend infrastructure
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --stack-name backend
-  create-aws-frontend:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
       - run:
           name: Create front end on aws
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --stack-name frontend 
-  create-aws-network:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
       - run:
           name: Setup network on aws
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/network.yml \
-              --stack-name network                           
+              --stack-name network
+                                 
 workflows:
   default:
     jobs:
@@ -147,18 +133,6 @@ workflows:
             - test-backend
 
       - create-cloudfront-infrastructure:
-          requires:
-            - audit-check-backend
-            - audit-check-frontend
-      - create-aws-backend:
-          requires:
-            - audit-check-backend
-            - audit-check-frontend
-      - create-aws-frontend:
-          requires:
-            - audit-check-backend
-            - audit-check-frontend
-      - create-aws-network:
           requires:
             - audit-check-backend
             - audit-check-frontend
