@@ -125,8 +125,8 @@ jobs:
               --template-file .circleci/files/network.yml \
               --stack-name "udapeople-network-${CIRCLE_WORKFLOW_ID}" \
               --parameter-overrides EnvironmentName="production"
-      - destroy_environment
-        when: on_fail
+      - destroy_environment:
+          when: on_fail
 
 commands:
   destroy_environment:
