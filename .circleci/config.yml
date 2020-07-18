@@ -116,7 +116,7 @@ jobs:
               --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID}" \
               --parameter-overrides WorkflowID="udapeople-cloudfront-${CIRCLE_WORKFLOW_ID}"
 
-  deploy:
+  create-infrastructure:
     docker:
       - image: amazon/aws-cli
     steps:
@@ -134,7 +134,7 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides ID="udapeople-frontendfrontend-${CIRCLE_WORKFLOW_ID}"
+              --parameter-overrides ID="udapeople-${CIRCLE_WORKFLOW_ID}"
       - run:
           name: Setup network on aws
           command: |
@@ -164,7 +164,10 @@ workflows:
       #     requires:
       #       - test-backend
 
-      - deploy
+      - create-infrastructure
           # requires:
             # - audit-check-backend
             # - audit-check-frontend
+      - promote-prod:
+          requires:
+            - create-infrastructure
