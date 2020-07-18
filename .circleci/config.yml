@@ -72,6 +72,7 @@ jobs:
           command: |
             cd backend
             npm run test
+  
   audit-check-backend:
     docker:
       - image: circleci/node:12
@@ -81,7 +82,8 @@ jobs:
           name: Audit check back end code
           command: |
             cd backend
-            npm audit fix --audit-level=critical --force
+            npm audit fix --audit-level=critical --force 
+ 
   deploy:
     docker:
       - image: amazon/aws-cli
@@ -92,43 +94,30 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides NAME="udapeople-backend-${CIRCLE_WORKFLOW_ID}"
+              --stack-name "udapeoplebackend"
+      - run:
+          name: Create cloud front infrastructure
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --stack-name "udapeoplecloudfront"
       - run:
           name: Create front end on aws
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides NAME="udapeople-frontend-${CIRCLE_WORKFLOW_ID}"
+              --stack-name "udapeoplefrontend"
       - run:
           name: Setup network on aws
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/network.yml \
-              --stack-name "udapeople-network-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides NAME="udapeople-network-${CIRCLE_WORKFLOW_ID}"
-      - run:
-          name: Promote production
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/cloudfront.yml \
-              --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides WorkflowId="udapeople-cloudfront-${CIRCLE_WORKFLOW_ID}"
-  rollback:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      -run:
-        name: Create backend infrastructure
-        command: |
-          aws cloudformation delete-stack \
-            --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID}"
-
+              --stack-name "udapeople-network"
+                                 
 workflows:
   my_workflow:
     jobs:
-      - build-frontend
+      # - build-frontend
       # - test-frontend:
       #     requires:
       #       - build-frontend
@@ -145,7 +134,7 @@ workflows:
       #     requires:
       #       - test-backend
 
-      # - deploy
+      - deploy
           # requires:
             # - audit-check-backend
             # - audit-check-frontend
