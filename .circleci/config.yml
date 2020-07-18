@@ -127,14 +127,14 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --stack-name "backend-udapeople-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides ID="backend-udapeople-${CIRCLE_WORKFLOW_ID}"
+              --parameter-overrides ID="udapeople-${CIRCLE_WORKFLOW_ID}"
       - run:
           name: Create front end on aws
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              --stack-name "udapeople-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides ID="frontend-udapeople-${CIRCLE_WORKFLOW_ID}"
+              --stack-name "frontend-udapeople-${CIRCLE_WORKFLOW_ID}" \
+              --parameter-overrides ID="udapeople-${CIRCLE_WORKFLOW_ID}"
       - run:
           name: Setup network on aws
           command: |
