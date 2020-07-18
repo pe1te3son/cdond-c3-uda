@@ -170,7 +170,7 @@ jobs:
       - run:
           name: show id
           command: |
-            cat old_workflow_id.txt
+            cat ~/old_workflow_id.txt
       # - run:
       #     name: Destroy front end
       #     command: |
