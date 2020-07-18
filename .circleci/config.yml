@@ -214,9 +214,9 @@ workflows:
       #       - test-backend
 
       - create-infrastructure
-          requires:
-            - audit-check-backend
-            - audit-check-frontend
+          # requires:
+          #   - audit-check-backend
+          #   - audit-check-frontend
       - promote-prod:
           requires:
             - create-infrastructure
