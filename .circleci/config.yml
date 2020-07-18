@@ -128,7 +128,7 @@ jobs:
 workflows:
   my_workflow:
     jobs:
-      # - build-frontend
+      - build-frontend
       # - test-frontend:
       #     requires:
       #       - build-frontend
@@ -145,7 +145,7 @@ workflows:
       #     requires:
       #       - test-backend
 
-      - deploy
+      # - deploy
           # requires:
             # - audit-check-backend
             # - audit-check-frontend
