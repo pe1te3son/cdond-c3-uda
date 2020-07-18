@@ -1,6 +1,5 @@
 version: 2.1
-orbs:
-  aws-cli: circleci/aws-cli@1.2.1
+
 commands:
   destroy_environment:
     steps:
@@ -149,9 +148,9 @@ jobs:
     docker:
       - image: python:3.7-alpine3.11
     steps:
-        - run:
-            command: |
-              echo "hello" > old_workflow_id.txt
+      - run:
+          command: |
+            echo "hello" > old_workflow_id.txt
       # - run:
       #     name: Query previous ID
       #     command: |
