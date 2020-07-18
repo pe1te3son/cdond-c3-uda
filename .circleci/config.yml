@@ -150,6 +150,9 @@ jobs:
     steps:
       - run:
           command: |
+            pip3 install awscli
+      - run:
+          command: |
             echo "hello" > ~/old_workflow_id.txt
       # - run:
       #     name: Query previous ID
@@ -163,7 +166,7 @@ jobs:
             - old_workflow_id.txt
   clean_up_old_environment:
     docker:
-      - image: circleci/node:12
+      - image: amazon/aws-cli
     steps:
       - attach_workspace:
           at: ~/
