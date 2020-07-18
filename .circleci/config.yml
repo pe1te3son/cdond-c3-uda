@@ -150,7 +150,7 @@ jobs:
     steps:
       - run:
           command: |
-            echo "hello" > old_workflow_id.txt
+            echo "hello" > ~/old_workflow_id.txt
       # - run:
       #     name: Query previous ID
       #     command: |
