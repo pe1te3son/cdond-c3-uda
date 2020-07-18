@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  aws-cli: circleci/aws-cli@1.2.1
 commands:
   destroy_environment:
     steps:
@@ -145,21 +147,24 @@ jobs:
       - destroy_environment
   get_last_deployment_id:
     docker:
-      - image: amazon/aws-cli
+      - image: python:3.7-alpine3.11
     steps:
-      - run:
-          name: Query previous ID
-          command: |
-            aws cloudformation \
-            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            --no-paginate --output text > ~/old_workflow_id.txt
+        - run:
+            command: |
+              echo "hello" > old_workflow_id.txt
+      # - run:
+      #     name: Query previous ID
+      #     command: |
+      #       aws cloudformation \
+      #       list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+      #       --no-paginate --output text > ~/old_workflow_id.txt
       - persist_to_workspace:
           root: ~/
           paths:
             - old_workflow_id.txt
   clean_up_old_environment:
     docker:
-      - image: amazon/aws-cli
+      - image: circleci/node:12
     steps:
       - attach_workspace:
           at: ~/
