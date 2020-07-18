@@ -213,14 +213,14 @@ workflows:
       #     requires:
       #       - test-backend
 
-      - create-infrastructure
+      # - create-infrastructure
           # requires:
           #   - audit-check-backend
           #   - audit-check-frontend
-      - promote-prod:
-          requires:
-            - create-infrastructure
-      # - get_last_deployment_id
-      # - clean_up_old_environment:
+      # - promote-prod:
       #     requires:
-      #       - get_last_deployment_id
+      #       - create-infrastructure
+      - get_last_deployment_id
+      - clean_up_old_environment:
+          requires:
+            - get_last_deployment_id
