@@ -5,7 +5,6 @@ Parameters:
   ID:
     Description: Unique identifier.
     Type: String
-    Default: ABC
 
 Resources:
   WebsiteBucket:
@@ -16,7 +15,7 @@ Resources:
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: 404.html
-  
+
   WebsiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
