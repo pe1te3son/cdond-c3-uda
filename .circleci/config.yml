@@ -168,26 +168,28 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: print id
+          name: Print old id
           command: |
             cat ~/old_workflow_id.txt
       - run:
+          name: Install aws cli
           command: |
             pip3 install awscli
       - run:
-          name: Destroy front end
+          name: Destroy old front end
           command: |
+            aws s3 rm "s3://udapeople-$(cat ~/old_workflow_id.txt)" --recursive
             aws cloudformation delete-stack --stack-name "frontend-$(cat ~/old_workflow_id.txt)"
       - run:
-          name: Destroy back end
+          name: Destroy old back end
           command: |
             aws cloudformation delete-stack --stack-name "backend-$(cat ~/old_workflow_id.txt)"
       - run:
-          name: Destroy network
+          name: Destroy old network
           command: |
             aws cloudformation delete-stack --stack-name "network-$(cat ~/old_workflow_id.txt)"
       - run:
-          name: Destroy cloudfront
+          name: Destroy old cloudfront
           command: |
             aws cloudformation delete-stack --stack-name "cloudfront-$(cat ~/old_workflow_id.txt)"
 
@@ -211,14 +213,14 @@ workflows:
       #     requires:
       #       - test-backend
 
-      # - create-infrastructure
-          # requires:
-            # - audit-check-backend
-            # - audit-check-frontend
-      # - promote-prod:
-      #     requires:
-      #       - create-infrastructure
-      - get_last_deployment_id
-      - clean_up_old_environment:
+      - create-infrastructure
           requires:
-            - get_last_deployment_id
+            - audit-check-backend
+            - audit-check-frontend
+      - promote-prod:
+          requires:
+            - create-infrastructure
+      # - get_last_deployment_id
+      # - clean_up_old_environment:
+      #     requires:
+      #       - get_last_deployment_id
