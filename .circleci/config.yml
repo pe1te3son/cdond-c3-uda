@@ -72,7 +72,6 @@ jobs:
           command: |
             cd backend
             npm run test
-  
   audit-check-backend:
     docker:
       - image: circleci/node:12
@@ -82,13 +81,13 @@ jobs:
           name: Audit check back end code
           command: |
             cd backend
-            npm audit fix --audit-level=critical --force 
-  promote-to-production: 
-    docker: 
+            npm audit fix --audit-level=critical --force
+  promote-to-production:
+    docker:
       - image: amazon/aws-cli
-    steps: 
+    steps:
       - checkout
-      - run: 
+      - run:
           name: Promote production
           command: |
             aws cloudformation deploy \
@@ -124,7 +123,7 @@ jobs:
   rollback:
     docker:
       - image: amazon/aws-cli
-    steps:  
+    steps:
       -run:
         name: Create backend infrastructure
         command: |
