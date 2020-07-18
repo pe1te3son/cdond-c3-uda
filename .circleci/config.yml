@@ -4,10 +4,18 @@ commands:
     steps:
       - run:
           when: on_fail
-          name: Destroy environment
+          name: Destroy front end
           command: |
             aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID}"
+      - run:
+          when: on_fail
+          name: Destroy back end
+          command: |
             aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID}"
+      - run:
+          when: on_fail
+          name: Destroy network
+          command: |
             aws cloudformation delete-stack --stack-name "udapeople-network-${CIRCLE_WORKFLOW_ID}"
 jobs:
   build-frontend:
