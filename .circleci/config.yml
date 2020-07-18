@@ -113,7 +113,7 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
-              --stack-name "udapeople-cloudfront" \
+              --stack-name "cloudfront-udapeople-${CIRCLE_WORKFLOW_ID}" \
               --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID}"
 
   create-infrastructure:
@@ -126,21 +126,21 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              --stack-name "udapeople-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides ID="udapeople-${CIRCLE_WORKFLOW_ID}"
+              --stack-name "backend-udapeople-${CIRCLE_WORKFLOW_ID}" \
+              --parameter-overrides ID="backend-udapeople-${CIRCLE_WORKFLOW_ID}"
       - run:
           name: Create front end on aws
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --stack-name "udapeople-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides ID="udapeople-${CIRCLE_WORKFLOW_ID}"
+              --parameter-overrides ID="frontend-udapeople-${CIRCLE_WORKFLOW_ID}"
       - run:
           name: Setup network on aws
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/network.yml \
-              --stack-name "udapeople-${CIRCLE_WORKFLOW_ID}" \
+              --stack-name "network-udapeople-${CIRCLE_WORKFLOW_ID}" \
               --parameter-overrides EnvironmentName="production"
       - destroy_environment
   get_last_deployment_id:
@@ -157,6 +157,28 @@ jobs:
           root: ~/
           paths:
             - old_workflow_id.txt
+  clean_up_old_environment:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Destroy front end
+          command: |
+            aws cloudformation delete-stack --stack-name "frontend-$(echo old_workflow_id.txt)"
+      - run:
+          name: Destroy back end
+          command: |
+            aws cloudformation delete-stack --stack-name "backend-$(echo old_workflow_id.txt)"
+      - run:
+          name: Destroy network
+          command: |
+            aws cloudformation delete-stack --stack-name "network-$(echo old_workflow_id.txt)"
+      - run:
+          name: Destroy cloudfront
+          command: |
+            aws cloudformation delete-stack --stack-name "cloudfront-$(echo old_workflow_id.txt)"
 
 workflows:
   my_workflow:
@@ -182,6 +204,6 @@ workflows:
           # requires:
             # - audit-check-backend
             # - audit-check-frontend
-      # - promote-prod:
-      #     requires:
-      #       - create-infrastructure
+      - promote-prod:
+          requires:
+            - create-infrastructure
