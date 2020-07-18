@@ -114,7 +114,7 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides WorkflowID="udapeople-cloudfront-${CIRCLE_WORKFLOW_ID}"
+              --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID}"
 
   create-infrastructure:
     docker:
@@ -168,6 +168,6 @@ workflows:
           # requires:
             # - audit-check-backend
             # - audit-check-frontend
-      - promote-prod:
-          requires:
-            - create-infrastructure
+      # - promote-prod:
+      #     requires:
+      #       - create-infrastructure
