@@ -89,15 +89,15 @@ jobs:
   promote-prod:
     docker:
         - image: amazon/aws-cli
-      steps:
-        - checkout
-        - run:
-            name: Create cloud front infrastructure
-            command: |
-              aws cloudformation deploy \
-                --template-file .circleci/files/cloudfront.yml \
-                --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID}" \
-                --parameter-overrides NAME="udapeople-cloudfront-${CIRCLE_WORKFLOW_ID}"
+    steps:
+      - checkout
+      - run:
+          name: Create cloud front infrastructure
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID}" \
+              --parameter-overrides NAME="udapeople-cloudfront-${CIRCLE_WORKFLOW_ID}"
 
   deploy:
     docker:
