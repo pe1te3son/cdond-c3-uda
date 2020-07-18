@@ -5,6 +5,8 @@ Parameters:
   WorkflowID:
     Description: Unique identifier.
     Type: String
+    Default: udapeople
+
 
 Resources:
 
