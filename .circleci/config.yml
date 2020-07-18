@@ -152,21 +152,18 @@ jobs:
           command: |
             pip3 install awscli
       - run:
+          name: Query previous ID
           command: |
-            echo "hello" > ~/old_workflow_id.txt
-      # - run:
-      #     name: Query previous ID
-      #     command: |
-      #       aws cloudformation \
-      #       list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-      #       --no-paginate --output text > ~/old_workflow_id.txt
+            aws cloudformation \
+            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            --no-paginate --output text > ~/old_workflow_id.txt
       - persist_to_workspace:
           root: ~/
           paths:
             - old_workflow_id.txt
   clean_up_old_environment:
     docker:
-      - image: amazon/aws-cli
+      - image: python:3.7-alpine3.11
     steps:
       - attach_workspace:
           at: ~/
