@@ -172,6 +172,9 @@ jobs:
           command: |
             cat ~/old_workflow_id.txt
       - run:
+          command: |
+            pip3 install awscli
+      - run:
           name: Destroy front end
           command: |
             aws cloudformation delete-stack --stack-name "frontend-$(cat ~/old_workflow_id.txt)"
