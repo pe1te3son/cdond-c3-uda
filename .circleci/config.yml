@@ -168,25 +168,25 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: show id
+          name: print id
           command: |
             cat ~/old_workflow_id.txt
-      # - run:
-      #     name: Destroy front end
-      #     command: |
-      #       aws cloudformation delete-stack --stack-name "frontend-$(cat old_workflow_id.txt)"
-      # - run:
-      #     name: Destroy back end
-      #     command: |
-      #       aws cloudformation delete-stack --stack-name "backend-$(cat old_workflow_id.txt)"
-      # - run:
-      #     name: Destroy network
-      #     command: |
-      #       aws cloudformation delete-stack --stack-name "network-$(cat old_workflow_id.txt)"
-      # - run:
-      #     name: Destroy cloudfront
-      #     command: |
-      #       aws cloudformation delete-stack --stack-name "cloudfront-$(cat old_workflow_id.txt)"
+      - run:
+          name: Destroy front end
+          command: |
+            aws cloudformation delete-stack --stack-name "frontend-$(cat ~/old_workflow_id.txt)"
+      - run:
+          name: Destroy back end
+          command: |
+            aws cloudformation delete-stack --stack-name "backend-$(cat ~/old_workflow_id.txt)"
+      - run:
+          name: Destroy network
+          command: |
+            aws cloudformation delete-stack --stack-name "network-$(cat ~/old_workflow_id.txt)"
+      - run:
+          name: Destroy cloudfront
+          command: |
+            aws cloudformation delete-stack --stack-name "cloudfront-$(cat ~/old_workflow_id.txt)"
 
 workflows:
   my_workflow:
