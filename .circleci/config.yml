@@ -126,9 +126,6 @@ jobs:
               --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID}"
 
   create-infrastructure:
-    branches:
-      only:
-        - master
     docker:
       - image: amazon/aws-cli
     steps:
@@ -224,7 +221,10 @@ workflows:
       #     requires:
       #       - test-backend
 
-      - create-infrastructure
+      - create-infrastructure:
+          filters:
+            branches:
+              only: master
       #     requires:
       #       - audit-check-backend
       #       - audit-check-frontend
