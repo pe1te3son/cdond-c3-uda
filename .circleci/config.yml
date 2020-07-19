@@ -63,7 +63,7 @@ jobs:
           name: Audit check front end code
           command: |
             cd frontend
-            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
 
   build-backend:
     docker:
@@ -110,7 +110,7 @@ jobs:
           name: Audit check back end code
           command: |
             cd backend
-            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
 
   promote-prod:
     docker:
@@ -204,19 +204,19 @@ jobs:
 workflows:
   my_workflow:
     jobs:
-      # - build-frontend
-      # - test-frontend:
-      #     requires:
-      #       - build-frontend
-      # - audit-check-frontend:
-      #     requires:
-      #       - test-frontend
-      # - build-backend:
-      #     requires:
-      #       - audit-check-frontend
-      - test-backend
-          # requires:
-          #   - build-backend
+      - build-frontend
+      - test-frontend:
+          requires:
+            - build-frontend
+      - audit-check-frontend:
+          requires:
+            - test-frontend
+      - build-backend:
+          requires:
+            - audit-check-frontend
+      - test-backend:
+          requires:
+            - build-backend
       - audit-check-backend:
           requires:
             - test-backend
