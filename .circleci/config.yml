@@ -204,7 +204,7 @@ jobs:
 workflows:
   my_workflow:
     jobs:
-      # - build-frontend
+      - build-frontend
       # - test-frontend:
       #     requires:
       #       - build-frontend
