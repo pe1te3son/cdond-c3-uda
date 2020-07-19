@@ -91,7 +91,7 @@
     "webpack-node-externals": "^1.7.2"
   },
   "jest-junit": {
-    "outputDirectory": "./reports/junit",
+    "outputDirectory": "../reports/junit",
     "outputName": "backend-junit.xml"
   },
   "jest": {

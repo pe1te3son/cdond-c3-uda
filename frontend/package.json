@@ -108,7 +108,7 @@
     "sweetalert2": "^8.13.4"
   },
   "jest-junit": {
-    "outputDirectory": "./reports/junit",
+    "outputDirectory": "../reports/junit",
     "outputName": "frontend-junit.xml"
   },
   "jest": {
