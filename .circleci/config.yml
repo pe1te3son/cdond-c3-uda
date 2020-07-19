@@ -49,14 +49,11 @@ jobs:
           name: Run tests with JUnit as reporter
           command: |
             cd frontend
-            mkdir -p ~/reports/junit/
             npm test
-          environment:
-            JEST_JUNIT_OUTPUT_DIR: ~/reports/junit/
       - store_test_results:
-          path: ~/reports/junit/
+          path: ./reports/junit/
       - store_artifacts:
-          path: ~/reports/junit
+          path: ./reports/junit
   audit-check-frontend:
     docker:
       - image: circleci/node:12
