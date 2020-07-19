@@ -222,10 +222,9 @@ workflows:
       #       - test-backend
 
       - create-infrastructure
-          filters:
-            branches:
-              only:
-                - master
+          branches:
+            only:
+              - master
       #     requires:
       #       - audit-check-backend
       #       - audit-check-frontend
