@@ -92,10 +92,14 @@ jobs:
             cd backend
             npm install
       - run:
-          name: Run backend test script
+          name: Run tests with JUnit as reporter
           command: |
             cd backend
-            npm run test
+            npm test
+      - store_test_results:
+          path: ./reports/junit/
+      - store_artifacts:
+          path: ./reports/junit
 
   audit-check-backend:
     docker:
