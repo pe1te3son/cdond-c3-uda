@@ -142,21 +142,44 @@ jobs:
           command: |
             BACKEND_PUBLIC_DNS=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=backend-udapeople-${CIRCLE_WORKFLOW_ID}" --query 'Reservations[*].Instances[*].PublicDnsName' --output text)
             curl -H "Content-Type: text/plain" -H "token: ${MEM_STASH_TOKEN}" --request PUT --data "${BACKEND_PUBLIC_DNS}" https://api.memstash.io/values/backend_dns
-      # - run:
-      #     name: Create front end on aws
-      #     command: |
-      #       aws cloudformation deploy \
-      #         --template-file .circleci/files/frontend.yml \
-      #         --stack-name "frontend-udapeople-${CIRCLE_WORKFLOW_ID}" \
-      #         --parameter-overrides ID="udapeople-${CIRCLE_WORKFLOW_ID}"
-      # - run:
-      #     name: Setup network on aws
-      #     command: |
-      #       aws cloudformation deploy \
-      #         --template-file .circleci/files/network.yml \
-      #         --stack-name "network-udapeople-${CIRCLE_WORKFLOW_ID}" \
-      #         --parameter-overrides EnvironmentName="production"
+            BACKEND_PUBLIC_IP=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=backend-udapeople-${CIRCLE_WORKFLOW_ID}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+            curl -H "Content-Type: text/plain" -H "token: ${MEM_STASH_TOKEN}" --request PUT --data "${BACKEND_PUBLIC_IP}" https://api.memstash.io/values/backend_ip
+      - run:
+          name: Create front end on aws
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --stack-name "frontend-udapeople-${CIRCLE_WORKFLOW_ID}" \
+              --parameter-overrides ID="udapeople-${CIRCLE_WORKFLOW_ID}"
+      - run:
+          name: Setup network on aws
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/network.yml \
+              --stack-name "network-udapeople-${CIRCLE_WORKFLOW_ID}" \
+              --parameter-overrides EnvironmentName="production"
       - destroy_environment
+
+  configure_infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["ed:f7:55:10:74:03:46:88:c9:ba:53:94:fc:bd:de:98"]
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible
+      - run:
+          name: Create inventory
+          command: |
+            curl -H "Content-Type: text/plain" -H "token: ${MEM_STASH_TOKEN}" --request GET --data "${BACKEND_PUBLIC_DNS}" https://api.memstash.io/values/backend_ip >> inventory.txt
+      - run:
+          name: Configure server
+          command: |
+            ansible-playbook -i inventory.txt .circleci/ansible/main.yml
+
   get_last_deployment_id:
     docker:
       - image: python:3.7-alpine3.11
@@ -226,7 +249,11 @@ workflows:
       #     requires:
       #       - test-backend
 
-      - create-infrastructure:
+      # - create-infrastructure:
+      #     filters:
+      #       branches:
+      #         only: master
+      - configure_infrastructure:
           filters:
             branches:
               only: master
