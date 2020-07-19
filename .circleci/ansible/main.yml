@@ -1,0 +1,6 @@
+---
+- name: Udapeople playbook
+  hosts: all
+  user: ubuntu
+  roles:
+  - configure-server
