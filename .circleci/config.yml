@@ -179,8 +179,6 @@ jobs:
       - run:
           name: Configure server
           command: |
-            pwd
-            ls -a
             ansible-playbook -i inventory.txt .circleci/ansible/main.yml
 
   get_last_deployment_id:
