@@ -7,17 +7,17 @@ commands:
           when: on_fail
           name: Destroy front end
           command: |
-            aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID}"
+            aws cloudformation delete-stack --stack-name "frontend-udapeople-${CIRCLE_WORKFLOW_ID}"
       - run:
           when: on_fail
           name: Destroy back end
           command: |
-            aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID}"
+            aws cloudformation delete-stack --stack-name "backend-udapeople-${CIRCLE_WORKFLOW_ID}"
       - run:
           when: on_fail
           name: Destroy network
           command: |
-            aws cloudformation delete-stack --stack-name "udapeople-network-${CIRCLE_WORKFLOW_ID}"
+            aws cloudformation delete-stack --stack-name "network-udapeople-${CIRCLE_WORKFLOW_ID}"
 jobs:
   build-frontend:
     docker:
@@ -150,7 +150,7 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --stack-name "frontend-udapeople-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides ID="udapeoplefrontendfrontendfrontendfrontendfrontendfrontendfrontend-${CIRCLE_WORKFLOW_ID}"
+              --parameter-overrides ID="udapeoplefrontendfrontendfrontendfrontendfrontendfrontend-${CIRCLE_WORKFLOW_ID}"
       - run:
           name: Setup network on aws
           command: |
