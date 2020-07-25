@@ -233,27 +233,27 @@ jobs:
 workflows:
   my_workflow:
     jobs:
-      # - build-frontend
-      # - test-frontend:
-      #     requires:
-      #       - build-frontend
-      # - audit-check-frontend:
-      #     requires:
-      #       - test-frontend
-      # - build-backend:
-      #     requires:
-      #       - audit-check-frontend
-      # - test-backend:
-      #     requires:
-      #       - build-backend
-      # - audit-check-backend:
-      #     requires:
-      #       - test-backend
+      - build-frontend
+      - test-frontend:
+          requires:
+            - build-frontend
+      - audit-check-frontend:
+          requires:
+            - test-frontend
+      - build-backend:
+          requires:
+            - audit-check-frontend
+      - test-backend:
+          requires:
+            - build-backend
+      - audit-check-backend:
+          requires:
+            - test-backend
 
-      # - create-infrastructure:
-      #     filters:
-      #       branches:
-      #         only: master
+      - create-infrastructure:
+          filters:
+            branches:
+              only: master
       - configure_infrastructure:
           filters:
             branches:
