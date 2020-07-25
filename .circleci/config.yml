@@ -150,14 +150,14 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --stack-name "frontend-udapeople-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides ID="udapeoplefrontendfrontendfrontendfrontendfrontendfrontend-${CIRCLE_WORKFLOW_ID}"
-      - run:
-          name: Setup network on aws
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/network.yml \
-              --stack-name "network-udapeople-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides EnvironmentName="production"
+              --parameter-overrides ID="udapeople-${CIRCLE_WORKFLOW_ID}"
+      # - run:
+      #     name: Setup network on aws
+      #     command: |
+      #       aws cloudformation deploy \
+      #         --template-file .circleci/files/network.yml \
+      #         --stack-name "network-udapeople-${CIRCLE_WORKFLOW_ID}" \
+      #         --parameter-overrides EnvironmentName="production"
       - destroy_environment
 
   configure_infrastructure:
@@ -233,38 +233,39 @@ jobs:
 workflows:
   my_workflow:
     jobs:
-      - build-frontend
-      - test-frontend:
-          requires:
-            - build-frontend
-      - audit-check-frontend:
-          requires:
-            - test-frontend
-      - build-backend:
-          requires:
-            - audit-check-frontend
-      - test-backend:
-          requires:
-            - build-backend
-      - audit-check-backend:
-          requires:
-            - test-backend
+      # - build-frontend
+      # - test-frontend:
+      #     requires:
+      #       - build-frontend
+      # - audit-check-frontend:
+      #     requires:
+      #       - test-frontend
+      # - build-backend:
+      #     requires:
+      #       - audit-check-frontend
+      # - test-backend:
+      #     requires:
+      #       - build-backend
+      # - audit-check-backend:
+      #     requires:
+      #       - test-backend
 
       - create-infrastructure:
-          requires:
-            - audit-check-backend
-            - audit-check-frontend
+          # requires:
+          #   - audit-check-backend
+          #   - audit-check-frontend
           filters:
             branches:
               only: master
 
       # - configure_infrastructure:
+      #     requires:
+      #       - create-infrastructure
       #     filters:
       #       branches:
       #         only: master
       #     requires:
-      #       - audit-check-backend
-      #       - audit-check-frontend
+      #       - create-infrastructure
       # - promote-prod:
       #     requires:
       #       - create-infrastructure
