@@ -254,10 +254,13 @@ workflows:
           filters:
             branches:
               only: master
-      - configure_infrastructure:
-          filters:
-            branches:
-              only: master
+            requires:
+              - audit-check-backend
+              - audit-check-frontend
+      # - configure_infrastructure:
+      #     filters:
+      #       branches:
+      #         only: master
       #     requires:
       #       - audit-check-backend
       #       - audit-check-frontend
