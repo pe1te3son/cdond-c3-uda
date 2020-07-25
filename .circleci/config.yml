@@ -251,12 +251,13 @@ workflows:
             - test-backend
 
       - create-infrastructure:
+          requires:
+            - audit-check-backend
+            - audit-check-frontend
           filters:
             branches:
               only: master
-            requires:
-              - audit-check-backend
-              - audit-check-frontend
+
       # - configure_infrastructure:
       #     filters:
       #       branches:
