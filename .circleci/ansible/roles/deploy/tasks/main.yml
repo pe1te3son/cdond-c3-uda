@@ -4,7 +4,7 @@
     cd /home/ubuntu/application/backend/
     npm install
     npm run build
-    PORT=3030 pm2 start dist/main.js
+    npm run start
   register: output
 
 - debug:
