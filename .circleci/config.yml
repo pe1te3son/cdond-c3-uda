@@ -415,7 +415,7 @@ workflows:
       #     filters:
       #       branches:
       #         only: master
-      - create-infrastructure:
+      - create-infrastructure
           # requires:
           #   - get_last_deployment_id
       - configure-infrastructure:
