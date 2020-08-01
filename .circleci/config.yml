@@ -215,6 +215,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible && pip install awscli
+      - run: mkdir -p .circleci/ansible/roles/configure-server/files/source
       - run: cp -avr backend .circleci/ansible/roles/configure-server/files/source/
       - run:
           name: Install dependencies
