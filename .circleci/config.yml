@@ -187,13 +187,13 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - run:
-          name: Setup network on aws
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/network.yml \
-              --stack-name "network-udapeople-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides EnvironmentName="production"
+      # - run:
+      #     name: Setup network on aws
+      #     command: |
+      #       aws cloudformation deploy \
+      #         --template-file .circleci/files/network.yml \
+      #         --stack-name "network-udapeople-${CIRCLE_WORKFLOW_ID}" \
+      #         --parameter-overrides EnvironmentName="production"
       - destroy_environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID}
           event: on_fail
