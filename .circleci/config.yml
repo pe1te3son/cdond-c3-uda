@@ -13,17 +13,17 @@ commands:
           name: Destroy front end
           command: |
             aws s3 rm s3://udapeople-<< parameters.workflow_id >> --recursive
-            aws cloudformation delete-stack --stack-name "frontend-udapeople-<< workflow_id >>"
+            aws cloudformation delete-stack --stack-name "frontend-udapeople-<< parameters.workflow_id >>"
       - run:
           when: << parameters.event >>
           name: Destroy back end
           command: |
-            aws cloudformation delete-stack --stack-name "backend-udapeople-<< workflow_id >>"
+            aws cloudformation delete-stack --stack-name "backend-udapeople-<< parameters.workflow_id >>"
       - run:
           when: << parameters.event >>
           name: Destroy network
           command: |
-            aws cloudformation delete-stack --stack-name "network-udapeople-<< workflow_id >>"
+            aws cloudformation delete-stack --stack-name "network-udapeople-<< parameters.workflow_id >>"
 jobs:
   build-frontend:
     docker:
