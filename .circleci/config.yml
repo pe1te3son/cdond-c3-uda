@@ -146,7 +146,7 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name "cloudfront-udapeople-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides WorkflowID="cloudfront-udapeople-${CIRCLE_WORKFLOW_ID}"
+              --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID}"
 
   create-infrastructure:
     docker:
