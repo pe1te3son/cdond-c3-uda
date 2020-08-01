@@ -313,8 +313,9 @@ workflows:
       - configure-infrastructure:
           requires:
             - create-infrastructure
-      #     requires:
-      #       - create-infrastructure
+      - run-migrations:
+          requires:
+            - configure-infrastructure
       # - promote-prod:
       #     requires:
       #       - create-infrastructure
