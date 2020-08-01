@@ -2,7 +2,7 @@ version: 2.1
 
 commands:
   destroy_environment:
-  parameters:
+    parameters:
       workflow_id:
         type: string
       event:
