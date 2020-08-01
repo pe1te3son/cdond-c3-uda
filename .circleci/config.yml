@@ -300,7 +300,7 @@ workflows:
             branches:
               only: master
 
-      - configure_infrastructure:
+      - configure-infrastructure:
           requires:
             - create-infrastructure
       #     requires:
