@@ -392,32 +392,32 @@ jobs:
 workflows:
   my_workflow:
     jobs:
-      # - build-frontend
-      # - test-frontend:
-      #     requires:
-      #       - build-frontend
-      # - audit-check-frontend:
-      #     requires:
-      #       - test-frontend
-      # - build-backend:
-      #     requires:
-      #       - audit-check-frontend
-      # - test-backend:
-      #     requires:
-      #       - build-backend
-      # - audit-check-backend:
-      #     requires:
-      #       - test-backend
-      # - get_last_deployment_id:
-      #     requires:
-      #       - audit-check-backend
-      #       - audit-check-frontend
-      #     filters:
-      #       branches:
-      #         only: master
+      - build-frontend
+      - test-frontend:
+          requires:
+            - build-frontend
+      - audit-check-frontend:
+          requires:
+            - test-frontend
+      - build-backend:
+          requires:
+            - audit-check-frontend
+      - test-backend:
+          requires:
+            - build-backend
+      - audit-check-backend:
+          requires:
+            - test-backend
+      - get_last_deployment_id:
+          requires:
+            - audit-check-backend
+            - audit-check-frontend
+          filters:
+            branches:
+              only: master
       - create-infrastructure
-          # requires:
-          #   - get_last_deployment_id
+          requires:
+            - get_last_deployment_id
       - configure-infrastructure:
           requires:
             - create-infrastructure
@@ -439,6 +439,6 @@ workflows:
       - promote-prod:
           requires:
             - setup-node-exporter
-      # - clean_up_old_environment:
-      #     requires:
-      #       - promote-prod
+      - clean_up_old_environment:
+          requires:
+            - promote-prod
