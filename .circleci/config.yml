@@ -12,7 +12,7 @@ commands:
           when: << parameters.event >>
           name: Destroy front end
           command: |
-            aws s3 rm s3://udapeople-<< parameters.workflow_id >> --recursive
+            aws s3 rm s3://udapeople-udapeople-<< parameters.workflow_id >> --recursive
             aws cloudformation delete-stack --stack-name "frontend-udapeople-<< parameters.workflow_id >>"
       - run:
           when: << parameters.event >>
@@ -24,6 +24,23 @@ commands:
           name: Destroy network
           command: |
             aws cloudformation delete-stack --stack-name "network-udapeople-<< parameters.workflow_id >>"
+  rollback-migrations:
+    description: Roll back migrations
+    parameters:
+      workflow_id:
+        type: string
+      event:
+        type: string
+    steps:
+      - attach_workspace:
+          at: ~/project/backend
+      - run:
+          name: Revert migrations
+          when: << parameters.event >>
+          command: cd backend && npm i && npm run build && npm run migrations:revert
+      - destroy_environment:
+          workflow_id: << parameters.workflow_id >>
+          event: << parameters.event >>
 jobs:
   build-frontend:
     docker:
@@ -181,27 +198,6 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID}
           event: on_fail
 
-  # configure_infrastructure:
-  #   docker:
-  #     - image: python:3.7-alpine3.11
-  #   steps:
-  #     - checkout
-  #     - add_ssh_keys:
-  #         fingerprints: ["2b:38:c1:61:e2:bc:9a:6a:1a:a6:47:cb:d7:54:34:1a"]
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           apk add --update ansible
-  #           apk add --update curl
-  #     - run:
-  #         name: Create inventory
-  #         command: |
-  #           curl -H "Content-Type: text/plain" -H "token: ${MEM_STASH_TOKEN}" --request GET --data "${BACKEND_PUBLIC_DNS}" https://api.memstash.io/values/backend_ip >> inventory.txt
-  #     - run:
-  #         name: Configure server
-  #         command: |
-  #           ansible-playbook -i inventory.txt .circleci/ansible/main.yml
-
   configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
@@ -222,6 +218,19 @@ jobs:
           command:
             cd .circleci/ansible/ && ansible-playbook main.yml -i inventory.txt
       - destroy_environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
+          event: on_fail
+  run-migrations:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            pip install awscli && apk add --update nodejs npm
+      - run: cd backend && npm i && npm run build && npm run migrations
+      - rollback-migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID}
           event: on_fail
   get_last_deployment_id:

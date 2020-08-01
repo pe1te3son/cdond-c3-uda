@@ -41,7 +41,3 @@
     owner: ubuntu
     group: ubuntu
     mode: '0755'
-#   register: output
-
-# - debug:
-#     var: output

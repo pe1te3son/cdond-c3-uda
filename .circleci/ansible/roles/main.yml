@@ -6,10 +6,10 @@
   - configure-server
   environment:
     ENVIRONMENT: production
-    TYPEORM_CONNECTION: postgres
-    TYPEORM_ENTITIES: ./src/modules/domain/**/*.entity.ts
-    TYPEORM_HOST: udadb.c7yzhuce2lpr.us-east-1.rds.amazonaws.com
-    TYPEORM_PORT: 5432
-    TYPEORM_USERNAME: postgres
-    TYPEORM_PASSWORD: password
-    TYPEORM_DATABASE: postgres
+    # TYPEORM_CONNECTION: postgres
+    # TYPEORM_ENTITIES: ./src/modules/domain/**/*.entity.ts
+    # TYPEORM_HOST: udadb.c7yzhuce2lpr.us-east-1.rds.amazonaws.com
+    # TYPEORM_PORT: 5432
+    # TYPEORM_USERNAME: postgres
+    # TYPEORM_PASSWORD: postgres
+    # TYPEORM_DATABASE: glee
