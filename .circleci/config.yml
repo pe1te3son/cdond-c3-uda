@@ -181,27 +181,48 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID}
           event: on_fail
 
-  configure_infrastructure:
+  # configure_infrastructure:
+  #   docker:
+  #     - image: python:3.7-alpine3.11
+  #   steps:
+  #     - checkout
+  #     - add_ssh_keys:
+  #         fingerprints: ["2b:38:c1:61:e2:bc:9a:6a:1a:a6:47:cb:d7:54:34:1a"]
+  #     - run:
+  #         name: Install dependencies
+  #         command: |
+  #           apk add --update ansible
+  #           apk add --update curl
+  #     - run:
+  #         name: Create inventory
+  #         command: |
+  #           curl -H "Content-Type: text/plain" -H "token: ${MEM_STASH_TOKEN}" --request GET --data "${BACKEND_PUBLIC_DNS}" https://api.memstash.io/values/backend_ip >> inventory.txt
+  #     - run:
+  #         name: Configure server
+  #         command: |
+  #           ansible-playbook -i inventory.txt .circleci/ansible/main.yml
+
+  configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["2b:38:c1:61:e2:bc:9a:6a:1a:a6:47:cb:d7:54:34:1a"]
+      - attach_workspace:
+          at: ~/
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible
-            apk add --update curl
+            apk add --update ansible && pip install awscli
+      - run: cp -avr backend .circleci/ansible/roles/configure-server/files/source/
       - run:
-          name: Create inventory
-          command: |
-            curl -H "Content-Type: text/plain" -H "token: ${MEM_STASH_TOKEN}" --request GET --data "${BACKEND_PUBLIC_DNS}" https://api.memstash.io/values/backend_ip >> inventory.txt
-      - run:
-          name: Configure server
-          command: |
-            ansible-playbook -i inventory.txt .circleci/ansible/main.yml
-
+          name: Install dependencies
+          command:
+            cd .circleci/ansible/ && ansible-playbook main.yml -i inventory.txt
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
+          event: on_fail
   get_last_deployment_id:
     docker:
       - image: python:3.7-alpine3.11
@@ -279,12 +300,9 @@ workflows:
             branches:
               only: master
 
-      # - configure_infrastructure:
-      #     requires:
-      #       - create-infrastructure
-      #     filters:
-      #       branches:
-      #         only: master
+      - configure_infrastructure:
+          requires:
+            - create-infrastructure
       #     requires:
       #       - create-infrastructure
       # - promote-prod:
