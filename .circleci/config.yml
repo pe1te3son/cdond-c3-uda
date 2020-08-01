@@ -411,7 +411,7 @@ workflows:
       - deploy-frontend:
           requires:
             - deploy-backend
-      -smoke-test:
+      - smoke-test:
           requires:
             - deploy-frontend
       # - promote-prod:
