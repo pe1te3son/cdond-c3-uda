@@ -4,7 +4,7 @@
     cd /home/ubuntu/application/backend/
     npm install
     npm run build
-    npm run start
+    pm2 start ./dist/main.js
   register: output
 
 - debug:
