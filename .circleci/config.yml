@@ -136,6 +136,14 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - run: yum -y install tar gzip
+      - run:
+          name: Create front end on aws
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --stack-name "frontend-udapeople-${CIRCLE_WORKFLOW_ID}" \
+              --parameter-overrides ID="udapeople-${CIRCLE_WORKFLOW_ID}"
       - run:
           name: Create backend infrastructure
           command: |
@@ -162,13 +170,6 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - run:
-          name: Create front end on aws
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/frontend.yml \
-              --stack-name "frontend-udapeople-${CIRCLE_WORKFLOW_ID}" \
-              --parameter-overrides ID="udapeople-${CIRCLE_WORKFLOW_ID}"
       # - run:
       #     name: Setup network on aws
       #     command: |
