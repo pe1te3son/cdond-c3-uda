@@ -318,9 +318,9 @@ jobs:
           command: |
             BACKEND_PUBLIC_IP=$(curl --request GET https://api.memstash.io/values/backend_ip -H "token: ${MEM_STASH_TOKEN}")
             curl "http://${BACKEND_PUBLIC_IP}:3030/api/status"
-      # - rollback-migrations:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID}
-      #     event: on_fail
+      - rollback-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
+          event: on_fail
 
   get_last_deployment_id:
     docker:
@@ -339,6 +339,24 @@ jobs:
           root: ~/
           paths:
             - old_workflow_id.txt
+  setup-node-exporter:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["2b:38:c1:61:e2:bc:9a:6a:1a:a6:47:cb:d7:54:34:1a"]
+      - attach_workspace:
+          at: ~/
+      - run: apk add --update ansible && pip install awscli && apk add --update nodejs npm curl
+      - run: |
+          cd .circleci/ansible/ && ansible-playbook node-exporter.yml -i inventory.txt
+      - rollback-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
+          event: on_fail
+      - destroy_environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
+          event: on_fail
   clean_up_old_environment:
     docker:
       - image: python:3.7-alpine3.11
@@ -390,15 +408,16 @@ workflows:
       # - audit-check-backend:
       #     requires:
       #       - test-backend
-
+      # - get_last_deployment_id:
+      #     requires:
+      #       - audit-check-backend
+      #       - audit-check-frontend
+      #     filters:
+      #       branches:
+      #         only: master
       - create-infrastructure:
           # requires:
-          #   - audit-check-backend
-          #   - audit-check-frontend
-          filters:
-            branches:
-              only: master
-
+          #   - get_last_deployment_id
       - configure-infrastructure:
           requires:
             - create-infrastructure
@@ -414,10 +433,12 @@ workflows:
       - smoke-test:
           requires:
             - deploy-frontend
-      # - promote-prod:
-      #     requires:
-      #       - create-infrastructure
-      # - get_last_deployment_id
+      - setup-node-exporter:
+          requires:
+            - smoke-test
+      - promote-prod:
+          requires:
+            - setup-node-exporter
       # - clean_up_old_environment:
       #     requires:
-      #       - get_last_deployment_id
+      #       - promote-prod
