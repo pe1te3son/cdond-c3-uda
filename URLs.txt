@@ -1,0 +1,5 @@
+prometheus - http://ec2-52-3-252-79.compute-1.amazonaws.com:9090/graph
+github - https://github.com/pe1te3son/cdond-c3-udacity
+cloudfront - http://d2o84210i875jr.cloudfront.net/
+backend - http://ec2-34-202-159-40.compute-1.amazonaws.com:3030/api/status
+s3bucket - https://udapeople-udapeople-d7c44481-012b-46c9-a90c-20e30b70df79.s3.amazonaws.com/index.html

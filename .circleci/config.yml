@@ -86,7 +86,7 @@ jobs:
           name: Audit check front end code
           command: |
             cd frontend
-      #       npm audit --audit-level=critical
+            npm audit --audit-level=critical
 
   build-backend:
     docker:
@@ -133,7 +133,7 @@ jobs:
           name: Audit check back end code
           command: |
             cd backend
-          #   npm audit --audit-level=critical
+            npm audit --audit-level=critical
 
   promote-prod:
     docker:
