@@ -147,6 +147,9 @@ jobs:
               --template-file .circleci/files/cloudfront.yml \
               --stack-name "cloudfront-udapeople-${CIRCLE_WORKFLOW_ID}" \
               --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID}"
+      - destroy_environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID}
+          event: on_fail
 
   create-infrastructure:
     docker:
@@ -361,33 +364,25 @@ jobs:
     docker:
       - image: python:3.7-alpine3.11
     steps:
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Print old id
-          command: |
-            cat ~/old_workflow_id.txt
       - run:
           name: Install aws cli
           command: |
             pip3 install awscli
       - run:
-          name: Destroy old front end
           command: |
-            aws s3 rm "s3://udapeople-$(cat ~/old_workflow_id.txt)" --recursive
-            aws cloudformation delete-stack --stack-name "frontend-$(cat ~/old_workflow_id.txt)"
-      - run:
-          name: Destroy old back end
-          command: |
-            aws cloudformation delete-stack --stack-name "backend-$(cat ~/old_workflow_id.txt)"
-      - run:
-          name: Destroy old network
-          command: |
-            aws cloudformation delete-stack --stack-name "network-$(cat ~/old_workflow_id.txt)"
-      - run:
-          name: Destroy old cloudfront
-          command: |
-            aws cloudformation delete-stack --stack-name "cloudfront-$(cat ~/old_workflow_id.txt)"
+            OLD_WORKFLOW_ID=$(curl --request GET "https://api.memstash.io/values/previous_id" -H "token: ${MEM_STASH_TOKEN}")
+              echo $OLD_WORKFLOW_ID
+              if test "$OLD_WORKFLOW_ID" != "No value matches the provided token and key."
+              then
+                aws s3 rm "s3://udapeople-udapeople-$OLD_WORKFLOW_ID" --recursive
+                aws cloudformation delete-stack --stack-name "frontend-udapeople-$OLD_WORKFLOW_ID"
+                aws cloudformation delete-stack --stack-name "backend-udapeople-$OLD_WORKFLOW_ID"
+                aws cloudformation delete-stack --stack-name "network-udapeople-$OLD_WORKFLOW_ID"
+                aws cloudformation delete-stack --stack-name "cloudfront-udapeople-$OLD_WORKFLOW_ID"
+              fi
+              curl --request PUT --data "${CIRCLE_WORKFLOW_ID}" \
+              https://api.memstash.io/values/previous_id \
+              -H "Content-Type: text/plain" -H "token: ${MEM_STASH_TOKEN}"
 
 workflows:
   my_workflow:
@@ -408,16 +403,20 @@ workflows:
       - audit-check-backend:
           requires:
             - test-backend
-      - get_last_deployment_id:
+      # - get_last_deployment_id:
+      #     requires:
+      #       - audit-check-backend
+      #       - audit-check-frontend
+      #     filters:
+      #       branches:
+      #         only: master
+      - create-infrastructure:
           requires:
             - audit-check-backend
             - audit-check-frontend
           filters:
             branches:
               only: master
-      - create-infrastructure:
-          requires:
-            - get_last_deployment_id
       - configure-infrastructure:
           requires:
             - create-infrastructure
