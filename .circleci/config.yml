@@ -367,7 +367,7 @@ jobs:
       - run:
           name: Install aws cli
           command: |
-            pip3 install awscli
+            pip3 install awscli && apk add curl
       - run:
           command: |
             OLD_WORKFLOW_ID=$(curl --request GET "https://api.memstash.io/values/previous_id" -H "token: ${MEM_STASH_TOKEN}")
@@ -417,27 +417,28 @@ workflows:
           filters:
             branches:
               only: master
-      - configure-infrastructure:
-          requires:
-            - create-infrastructure
-      - run-migrations:
-          requires:
-            - configure-infrastructure
-      - deploy-backend:
-          requires:
-            - run-migrations
-      - deploy-frontend:
-          requires:
-            - deploy-backend
-      - smoke-test:
-          requires:
-            - deploy-frontend
-      - setup-node-exporter:
-          requires:
-            - smoke-test
+      # - configure-infrastructure:
+      #     requires:
+      #       - create-infrastructure
+      # - run-migrations:
+      #     requires:
+      #       - configure-infrastructure
+      # - deploy-backend:
+      #     requires:
+      #       - run-migrations
+      # - deploy-frontend:
+      #     requires:
+      #       - deploy-backend
+      # - smoke-test:
+      #     requires:
+      #       - deploy-frontend
+      # - setup-node-exporter:
+      #     requires:
+      #       - smoke-test
       - promote-prod:
           requires:
-            - setup-node-exporter
+            - create-infrastructure
+            # - setup-node-exporter
       - clean_up_old_environment:
           requires:
             - promote-prod
