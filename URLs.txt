@@ -1,5 +1,16 @@
-prometheus - http://ec2-52-3-252-79.compute-1.amazonaws.com:9090/graph
-github - https://github.com/pe1te3son/cdond-c3-udacity
-cloudfront - http://d2o84210i875jr.cloudfront.net/
-backend - http://ec2-34-202-159-40.compute-1.amazonaws.com:3030/api/status
-s3bucket - https://udapeople-udapeople-d7c44481-012b-46c9-a90c-20e30b70df79.s3.amazonaws.com/index.html
+
+
+[URL01] github - https://github.com/pe1te3son/cdond-c3-udacity
+[URL02] s3bucket - http://udapeople-udapeople-d7c44481-012b-46c9-a90c-20e30b70df79.s3.amazonaws.com/index.html
+[URL03] cloudfront - http://d2o84210i875jr.cloudfront.net/
+ [URL04] backend - http://ec2-34-202-159-40.compute-1.amazonaws.com:3030/api/status
+[URL05] prometheus - http://ec2-52-3-252-79.compute-1.amazonaws.com:9090/graph
+
+    Public Url to GitHub repository (not private) [URL01]
+    Public URL for your S3 Bucket (aka, your green candidate front-end) [URL02]
+    Public URL for your CloudFront distribution (aka, your blue production front-end) [URL03]
+    Public URLs to deployed application back-end in EC2 [URL04]
+    Public URL to your Prometheus Server [URL05]
+
+
+PLEASE RUN ALL ON HTTP
